@@ -2,6 +2,7 @@
   "use strict";
 
   const LOCAL_API_BASE = "http://127.0.0.1:5000";
+  const DEFAULT_REQUEST_TIMEOUT_MS = 90000;
   const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
   const PHOTO_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
   const PHOTO_FIELDS = [
@@ -128,7 +129,10 @@
       throw error;
     }
     const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), timeoutMs || 30000);
+    const timer = window.setTimeout(
+      () => controller.abort(),
+      timeoutMs || DEFAULT_REQUEST_TIMEOUT_MS,
+    );
     try {
       const response = await fetch(`${API_BASE}${path}`, {
         ...options,
@@ -151,7 +155,12 @@
         : (error instanceof TypeError
           ? "Could not reach the backend. Check that it is running and that this page's origin is allowed."
           : (error && error.message ? error.message : "The request failed."));
-      setConnection(false, "check the backend URL and CORS settings");
+      setConnection(
+        false,
+        error && error.name === "AbortError"
+          ? "the backend took too long to respond; it may be waking up"
+          : "check the backend URL and CORS settings",
+      );
       throw new Error(message);
     } finally {
       window.clearTimeout(timer);
@@ -373,7 +382,11 @@
 
   async function checkHealth() {
     try {
-      const health = await requestJson("/api/health", { method: "GET" }, 12000);
+      const health = await requestJson(
+        "/api/health",
+        { method: "GET" },
+        DEFAULT_REQUEST_TIMEOUT_MS,
+      );
       const detail = health.registry_scope === "sample_demo" ? "limited demo registry" : "service ready";
       setConnection(true, detail);
       setFooterLimitations(health);
