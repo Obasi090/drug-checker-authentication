@@ -102,21 +102,21 @@ NAFDAC's public archive is at [nafdac.gov.ng/category/recalls-and-alerts](https:
 
 The repository includes static hosting configuration in `vercel.json` and a build script in `frontend/build.mjs`. Deploy the existing frontend files from `frontend/`; no frontend framework or package installation is required. In Vercel project settings, add the public (non-secret) build environment variable `DRUG_CHECKER_API_BASE_URL` with the HTTPS origin of the Render service, for example `https://your-service.onrender.com` (no trailing slash), then deploy. The build rejects non-HTTPS remote API URLs. The app uses `http://127.0.0.1:5000` only when opened locally and does not fall back to localhost on a public hostname.
 
-`render.yaml`, `render_start.sh`, and `requirements-deploy.txt` prepare the existing Flask API for Render/Gunicorn. The persistent SQLite path is `/var/data/drugs.db`. On first start only, the launcher copies `data/deployment_seed.sqlite3` if that path does not exist, then runs the existing additive initializer. Restarts reuse the persistent file; an existing database is never replaced. The seed was created from a copy of the development database, imported via the existing sample importer, and verified with 80 medicine rows, the existing 1 synthetic alert, import history, and SQLite integrity `ok`; the development database itself was not modified. No import or alert seeding runs at normal startup.
+`render.yaml`, `render_start.sh`, and `requirements-deploy.txt` prepare the existing Flask API for Render/Gunicorn. The free-plan SQLite path is `/tmp/drugs.db`, which is ephemeral. On a fresh instance, the launcher copies `data/deployment_seed.sqlite3` if the path does not exist, then runs the existing additive initializer. The seed contains 80 medicine rows, the existing 1 synthetic alert, import history, and passed SQLite integrity checks; it was created from a copy of the development database, which was not modified. Sample data is restored after an instance restart, but runtime database changes are lost. No import or alert seeding runs at normal startup.
 
-Render deployment requires manually entering `ALLOWED_ORIGINS` as the exact deployed Vercel origin (for example `https://your-project.vercel.app`) and optionally `GEMINI_API_KEY` in Render's secret environment settings. The Gemini key remains server-side. Do not put it in Vercel or frontend configuration. Render's persistent disk is a paid-service feature; creating that service incurs cost and requires an account with the appropriate plan. No cloud deployment was performed from this workspace.
+Render deployment requires manually entering `ALLOWED_ORIGINS` as the exact deployed Vercel origin (for example `https://your-project.vercel.app`) and optionally `GEMINI_API_KEY` in Render's secret environment settings. The Gemini key remains server-side. Do not put it in Vercel or frontend configuration. Render Free services can spin down after 15 minutes without requests, and their filesystem is ephemeral; the app restores the fixed demo seed on startup, but does not preserve changes made to the database at runtime.
 
 Manual setup sequence:
 
 1. Push this repository to a Git provider, create a Vercel project from it, and deploy once to obtain the Vercel origin.
-2. Create a Render Blueprint from the repository. Review the paid Starter web service and 1 GB persistent disk before creating it. Set `ALLOWED_ORIGINS` to the Vercel origin and optionally set `GEMINI_API_KEY` in Render's environment settings.
+2. Create a Render Blueprint from the repository using the Free plan. Set `ALLOWED_ORIGINS` to the Vercel origin and optionally set `GEMINI_API_KEY` in Render's environment settings.
 3. Wait for Render's `/api/health` check to pass and note the service HTTPS URL.
 4. Set Vercel's `DRUG_CHECKER_API_BASE_URL` to that URL, redeploy, then check `/api/health` and perform a medicine lookup from the public frontend.
-5. Keep the persistent disk attached; its contents survive service restarts. Use Render's disk backup/export process before manual database operations.
+5. Treat the backend as a read-only demo: any runtime database changes are lost when its free instance restarts or spins down. The committed seed is copied again at startup.
 
 For local serving, run the Flask API with `python -m drug_checker.api --host 127.0.0.1 --port 5000` and serve `frontend/` with a local static HTTP server. CORS is already controlled by `ALLOWED_ORIGINS`; for a separate local frontend origin, include that exact origin in the local backend environment. Do not use `file://` for browser integration because browsers restrict fetches from local files.
 
-The deployment configuration was prepared but not deployed: cloud account authentication and repository linkage are not available here, and Render's persistent disk requires a paid service. Focused public URL, deployed Gemini, and restart-persistence checks therefore remain outstanding.
+The frontend is deployed to Vercel. The backend deployment is pending Render account sign-in and service creation; the live frontend needs the backend URL configured after the API is available.
 
 ## Run the API
 

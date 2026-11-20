@@ -2,20 +2,16 @@ services:
   - type: web
     name: drug-checker-sms-api
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements-deploy.txt
     startCommand: bash render_start.sh
     healthCheckPath: /api/health
     autoDeploy: true
-    disk:
-      name: drug-checker-sqlite
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: DRUG_CHECKER_DB_PATH
-        value: /var/data/drugs.db
+        value: /tmp/drugs.db
       - key: DRUG_CHECKER_LOG_PATH
-        value: /var/data/drug_db.log
+        value: /tmp/drug_db.log
       - key: ALLOWED_ORIGINS
         sync: false
       - key: GEMINI_API_KEY

@@ -2,12 +2,14 @@
 set -eu
 
 PROJECT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-export DRUG_CHECKER_DB_PATH="${DRUG_CHECKER_DB_PATH:-/var/data/drugs.db}"
-export DRUG_CHECKER_LOG_PATH="${DRUG_CHECKER_LOG_PATH:-/var/data/drug_db.log}"
+export DRUG_CHECKER_DB_PATH="${DRUG_CHECKER_DB_PATH:-/tmp/drugs.db}"
+export DRUG_CHECKER_LOG_PATH="${DRUG_CHECKER_LOG_PATH:-/tmp/drug_db.log}"
 
 mkdir -p "$(dirname -- "$DRUG_CHECKER_DB_PATH")" "$(dirname -- "$DRUG_CHECKER_LOG_PATH")"
 
-# Seed only a new persistent-disk path. Never replace an existing database.
+# Render Free has ephemeral storage. On a fresh instance, restore the committed
+# demonstration snapshot. Runtime database changes are not durable on this plan.
+# Never replace a database that already exists in the current instance.
 if [ ! -f "$DRUG_CHECKER_DB_PATH" ]; then
   if [ ! -f "$PROJECT_DIR/data/deployment_seed.sqlite3" ]; then
     echo "Deployment seed database is missing; refusing to create an empty database." >&2
