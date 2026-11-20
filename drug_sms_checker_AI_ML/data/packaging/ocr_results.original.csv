@@ -1,0 +1,23 @@
+﻿medicine_id,image_condition,image_filename,brand_name,nafdac_registration_number,manufacturer,strength,package_volume_separate_from_strength,extraction_notes
+pack_01,daylight,pack_01.jpg (assumed),Avrocid Suspension (Pineapple Flavour),Not visible,AVRO PHARMA,Not visible,,
+pack_01,indoor,pack_01 indoor image (filename not supplied),Avrocid Suspension (Pineapple Flavour),Not visible,AVRO PHARMA,Not visible,,
+pack_02,daylight,pack_02 daylight image (filename not supplied),Dr. Meyer's Calcimax Calcium Suspension,04-1436,VITABIOTICS (NIG.) LTD.,Each 5 ml contains: Calcium Carbonate B.P. (as CALCIUM) 150 mg; Magnesium Hydroxide B.P. (as MAGNESIUM) 25 mg; Zinc Sulphate B.P. (as ZINC) 1.5 mg; Vitamin D3 B.P. 200 I.U.,,
+pack_02,indoor,pack_02 indoor image (filename not supplied),Dr. Meyer's Calcimax Calcium Suspension,04-1436,VITABIOTICS (NIG.) LTD.,Each 5 ml contains: Calcium Carbonate B.P. (as CALCIUM) 150 mg; Magnesium Hydroxide B.P. (as MAGNESIUM) 25 mg; Zinc Sulphate B.P. (as ZINC) 1.5 mg; Vitamin D3 B.P. 200 I.U.,,
+pack_03,daylight,pack_03 daylight image,MIM Health & Vitality Tonic (Iron + B. Complex + Zinc),Not visible,Not visible,Not visible,100 ml,Package volume visible; exact active-ingredient breakdown not visible.
+pack_03,indoor,pack_03 indoor image,MIM Health & Vitality Tonic (Iron + B. Complex + Zinc),Not visible,Not visible,Not visible,100 ml,Package volume visible; exact active-ingredient breakdown not visible.
+pack_04,daylight,pack_04.jpeg,"Polygel DUAL (Aluminium Hydroxide, Magnesium Carbonate, Sodium Alginate & Simethicone Oral Suspension - Mint Flavor)",Not visible,Shalina,Not visible,200 ml,Package volume visible; active-ingredient concentrations not visible.
+pack_04,indoor,pack_04_2.jpeg (described once as pack_04.jpeg; confirm filename),"Polygel DUAL (Aluminium Hydroxide, Magnesium Carbonate, Sodium Alginate & Simethicone Oral Suspension - Mint Flavor)",Not visible,Shalina,Not visible,200 ml,Package volume visible; active-ingredient concentrations not visible.
+pack_05,daylight,pack_05 daylight image,MOKO Liquide Paraffin (Aboire),Not visible,Not visible,Not visible,,
+pack_05,indoor,pack_05 indoor image,MOKO Liquide Paraffin (Aboire),Not visible,New Healthway Co. Limited,Not visible,200 ml,Package volume and 'Contient liquide Paraffin B.P.' are visible; exact dosage strength per unit volume not visible.
+pack_06,daylight,pack_06 daylight image,Gestid Suspension,Not visible,Not visible,Not visible,,
+pack_06,indoor,pack_06 indoor image,Gestid Suspension,Not visible,Not visible,Not visible,100 ml,Package volume visible; active-ingredient dosage strength not visible.
+pack_07,daylight,pack_07 daylight image,KEEP-ON EMULSION,Not visible,Not visible,Not visible,450 ml,Package volume visible; active-ingredient dosage strength not visible.
+pack_07,indoor,pack_07 indoor image,KEEP-ON EMULSION,Not visible,Not visible,Not visible,450 ml,Package volume visible; active-ingredient dosage strength not visible.
+pack_08,daylight,pack_08 daylight image,Bunto Blood Tonic (Iron + B12 + B Complex + Zinc),Not visible,TUYIL PHARM. IND. LIMITED,Not visible,100 ml,Package volume visible; active-ingredient dosage strength not visible.
+pack_08,indoor,pack_08 indoor image,Bunto Blood Tonic (Iron + B12 + B Complex + Zinc),Not visible,TUYIL PHARM. IND. LIMITED,Not visible,100 ml,Package volume visible; active-ingredient dosage strength not visible.
+pack_09,daylight,pack_09 daylight image,Krispine HB 12 (Sirop D'hémoglobine avec Vitamine B12),Not visible,Not visible,Not visible,,
+pack_09,indoor,pack_09 indoor image,Krispine HB 12 (Sirop D'hémoglobine avec Vitamine B12),Not visible,Not visible,Not visible,,
+pack_10,daylight,pack_10 daylight image,"Bode Sudrex (Headache & Fever — Paracetamol, Caffeine; Two-Layer Tablets)",04-1860,Not visible,Not visible,,Package count shown: 2 blisters × 10 tablets; this is not dosage strength.
+pack_10,indoor,pack_10 indoor image,"Bode Sudrex (Headache & Fever — Paracetamol, Caffeine)",Not visible,Not visible,Not visible,,NAFDAC line too dim/blurry to read; mg dosage strength not visible.
+pack_11,daylight,pack_11 daylight image,ZOLAT (albendazole) SUSPENSION,04-3230,Emzor,Not visible,20 ml,Package volume visible; active-ingredient dosage strength per unit volume not visible.
+pack_11,indoor,pack_11 indoor image,ZOLAT (albendazole) SUSPENSION,Not visible,Emzor,Not visible,20 ml,NAFDAC number on lower purple band too blurry to read with certainty.

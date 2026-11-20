@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drug SMS Checker - Local AI/ML Tester</title>
+<style>
+  :root { --ink:#16202b; --muted:#5b6877; --line:#d8dee6; --bg:#f4f6f9; --card:#fff;
+          --blue:#1f5fa8; --green:#137a4b; --red:#a32626; --amber:#9a6200; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 "Segoe UI",Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:#16283d; color:#fff; padding:14px 22px; }
+  header h1 { margin:0; font-size:19px; }
+  header .meta { margin-top:6px; font-size:12px; color:#c6d6e7; }
+  .layout { display:flex; min-height:calc(100vh - 74px); }
+  nav { width:220px; flex:none; background:#e9eef4; border-right:1px solid var(--line); padding:14px 10px; }
+  nav button { display:block; width:100%; text-align:left; border:0; background:transparent; padding:10px 12px;
+               margin-bottom:4px; border-radius:6px; cursor:pointer; color:#2d3b4b; font-size:13px; }
+  nav button.active { background:var(--blue); color:#fff; }
+  main { flex:1; padding:22px 28px; max-width:1200px; }
+  section { display:none; }
+  section.active { display:block; }
+  h2 { margin:0 0 4px; font-size:20px; }
+  .hint { color:var(--muted); margin:0 0 18px; font-size:13px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin-bottom:14px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
+  textarea, input[type=text], select { width:100%; max-width:680px; padding:9px 10px; border:1px solid #bcc7d4;
+        border-radius:6px; font:inherit; background:#fff; }
+  textarea { min-height:78px; resize:vertical; }
+  button.act { background:var(--blue); color:#fff; border:0; border-radius:6px; padding:9px 16px; cursor:pointer; font:inherit; }
+  button.act:disabled { opacity:.6; cursor:wait; }
+  button.alt { background:#e4eaf1; color:#24364a; border:1px solid #c5d0dc; border-radius:6px; padding:9px 14px; cursor:pointer; font:inherit; }
+  .badge { display:inline-block; padding:3px 9px; border-radius:12px; font-size:12px; font-weight:600;
+           background:#eef2f7; color:#33465c; border:1px solid #d4dce6; }
+  .badge.MATCH { background:#e5f6ec; color:var(--green); border-color:#a9dfc1; }
+  .badge.MISMATCH { background:#fdeaea; color:var(--red); border-color:#f0b8b8; }
+  .badge.MANUAL_REVIEW_REQUIRED, .badge.CONFLICT { background:#fff3dc; color:var(--amber); border-color:#efd09a; }
+  .badge.PARTIAL_MATCH { background:#eaf1fc; color:var(--blue); border-color:#b9d0ee; }
+  .badge.UNKNOWN, .badge.NOT_VISIBLE, .badge.MISSING { background:#f1f3f6; color:#647282; }
+  table { border-collapse:collapse; width:100%; margin:8px 0 4px; font-size:13px; }
+  th, td { border-bottom:1px solid #e6ebf1; padding:6px 8px; text-align:left; vertical-align:top; }
+  th { color:#435366; font-weight:600; background:#f8fafc; }
+  ul { margin:6px 0; padding-left:20px; }
+  .label { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:14px 0 2px; }
+  .error { background:#fdeaea; color:var(--red); border:1px solid #f0b8b8; border-radius:6px; padding:10px 12px; margin:10px 0; }
+  .notice { background:#fff8e8; border:1px solid #eed9aa; border-radius:6px; padding:10px 12px; margin:10px 0; font-size:13px; }
+  img.preview { max-width:260px; max-height:190px; border:1px solid var(--line); border-radius:6px; margin-top:8px; }
+  .pair { display:flex; gap:18px; flex-wrap:wrap; }
+  .pair > div { flex:1; min-width:240px; }
+  #loading { display:none; position:fixed; right:22px; bottom:22px; background:#16283d; color:#fff;
+             padding:12px 18px; border-radius:8px; box-shadow:0 4px 14px #0003; z-index:10; font-size:13px; }
+  #loading.show { display:block; }
+  code { background:#f0f3f7; padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Drug SMS Checker - Local AI/ML Tester</h1>
+  <div class="meta" id="config">Loading configuration...</div>
+</header>
+<div class="layout">
+  <nav>
+    <button class="active" data-section="sms">A. SMS Medicine Checker</button>
+    <button data-section="photo">B. Medicine Image Checker</button>
+    <button data-section="compare">C. Daylight / Indoor Comparison</button>
+    <button data-section="catalogue">D. Catalogue Search</button>
+    <button data-section="decisions">E. Verification Engine Tester</button>
+    <button data-section="packages">F. Existing Packaging Dataset</button>
+  </nav>
+  <main>
+    <section id="sms" class="active">
+      <h2>A. SMS Medicine Checker</h2>
+      <p class="hint">Deterministic parsing and verification. No network call.</p>
+      <div class="card">
+        <textarea id="smsText" placeholder='Please verify this medicine: Acimox Capsule'></textarea>
+        <div style="margin-top:10px"><button class="act" id="smsGo">Check message</button></div>
+      </div>
+      <div id="smsOut"></div>
+    </section>
+
+    <section id="photo">
+      <h2>B. Medicine Image Checker</h2>
+      <p class="hint">One bounded Gemini request. Extracted values are observations, never verified ground truth.</p>
+      <div class="card">
+        <input type="file" id="photoFile" accept="image/jpeg,image/png,image/webp">
+        <div id="photoPreview"></div>
+        <div style="margin-top:10px"><button class="act" id="photoGo">Extract and verify</button></div>
+      </div>
+      <div id="photoOut"></div>
+    </section>
+
+    <section id="compare">
+      <h2>C. Daylight and Indoor Comparison</h2>
+      <p class="hint">Two bounded Gemini requests, or a fully offline reconciliation of the existing records.</p>
+      <div class="card pair">
+        <div>
+          <div class="label">Daylight image</div>
+          <input type="file" id="dayFile" accept="image/jpeg,image/png,image/webp">
+          <div id="dayPreview"></div>
+        </div>
+        <div>
+          <div class="label">Indoor image</div>
+          <input type="file" id="indoorFile" accept="image/jpeg,image/png,image/webp">
+          <div id="indoorPreview"></div>
+        </div>
+      </div>
+      <div class="card row">
+        <button class="act" id="compareGo">Extract both and reconcile</button>
+        <select id="datasetPack" style="max-width:260px"></select>
+        <button class="alt" id="datasetGo">Reconcile existing pair offline</button>
+      </div>
+      <div id="compareOut"></div>
+    </section>
+
+    <section id="catalogue">
+      <h2>D. Catalogue Search</h2>
+      <p class="hint">Searches the preserved 40-record local test catalogue. Blank fields stay blank.</p>
+      <div class="card row">
+        <input type="text" id="catQuery" placeholder="brand, generic, registration, applicant, manufacturer">
+        <button class="act" id="catGo">Search</button>
+      </div>
+      <div id="catOut"></div>
+    </section>
+
+    <section id="decisions">
+      <h2>E. Verification Engine Tester</h2>
+      <p class="hint">Six decision types plus a Paracetamol generic-name collision, with full evidence.</p>
+      <div class="card"><button class="act" id="decisionsGo">Run evidence tour</button></div>
+      <div id="decisionsOut"></div>
+    </section>
+
+    <section id="packages">
+      <h2>F. Existing Packaging Dataset</h2>
+      <p class="hint">All 11 preserved packaging records through offline reconciliation and verification.</p>
+      <div class="card"><button class="act" id="packagesGo">Run all 11 records</button></div>
+      <div id="packagesOut"></div>
+    </section>
+  </main>
+</div>
+<div id="loading">Calling Gemini... bounded request in progress</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (v) => v === null || v === undefined ? '<em>(not supplied)</em>'
+  : String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const badge = (v) => `<span class="badge ${esc(v)}">${esc(v)}</span>`;
+
+async function call(url, body, loading) {
+  if (loading) $('loading').classList.add('show');
+  try {
+    const init = body === undefined ? {method:'GET'} : {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+    };
+    const response = await fetch(url, init);
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || ('HTTP ' + response.status));
+    return data;
+  } finally {
+    if (loading) $('loading').classList.remove('show');
+  }
+}
+function showError(target, err) { $(target).innerHTML = `<div class="error">${esc(err.message)}</div>`; }
+
+function fieldTable(fields) {
+  if (!fields) return '';
+  let rows = '';
+  for (const [name, f] of Object.entries(fields)) {
+    rows += `<tr><th>${esc(name.replaceAll('_',' '))}</th><td>${esc(f.value === null ? f.raw : f.value)}</td><td>${badge(f.status)}</td></tr>`;
+  }
+  return `<table><tr><th>Field</th><th>Observed value</th><th>State</th></tr>${rows}</table>`;
+}
+
+function verificationCard(v) {
+  let cands = '<em>none retrieved</em>';
+  if (v.candidates && v.candidates.length) {
+    cands = '<table><tr><th>Product</th><th>Matched by</th><th>similarity_score</th><th>Confirmation</th></tr>' +
+      v.candidates.map(c => `<tr><td>${esc(c.identity)}${c.selected?' <strong>[SELECTED]</strong>':''}</td>
+        <td>${esc(c.matched_by)}</td><td>${c.similarity_score===null?'n/a':esc(c.similarity_score)}</td>
+        <td>${c.requires_confirmation?'required':'not required'}</td></tr>`).join('') + '</table>';
+  }
+  let comps = '<em>no candidate comparison performed</em>';
+  if (v.field_comparisons && v.field_comparisons.length) {
+    comps = '<table><tr><th>Candidate</th><th>Field</th><th>Status</th><th>Observed</th><th>Catalogue</th><th>Reason</th></tr>' +
+      v.field_comparisons.map(c => `<tr><td>${esc(c.candidate)}</td><td>${esc(c.field)}</td><td>${badge(c.status)}</td>
+        <td>${esc(c.observed_raw)}</td><td>${esc(c.catalogue_raw)}</td><td>${esc(c.reason)}</td></tr>`).join('') + '</table>';
+  }
+  const reasons = (v.reasons||[]).map(r => `<li>${esc(r)}</li>`).join('');
+  const notes = (v.notes||[]).map(n => `<li>${esc(n)}</li>`).join('');
+  return `<div class="card">
+    <div class="label">Final decision</div><div>${badge(v.status)} &nbsp; Manual review: <strong>${v.manual_review?'YES':'NO'}</strong></div>
+    <p>${esc(v.status_explanation)}</p>
+    <ul>${reasons}</ul>
+    <div class="label">Missing vs reviewed</div>
+    <p>Missing information: ${esc((v.missing_fields||[]).join(', ') || 'none')}<br>
+       Fields needing review: ${esc((v.review_fields||[]).join(', ') || 'none')}</p>
+    <div class="label">Catalogue candidates</div>${cands}
+    <div class="label">Field comparisons (UNKNOWN means missing, not mismatch)</div>${comps}
+    <div class="label">Safety notes</div><ul>${notes}</ul>
+    <p class="hint">Accuracy tested: ${esc(v.accuracy_tested)}. similarity_score is a retrieval hint, not a probability.</p>
+  </div>`;
+}
+
+document.querySelectorAll('nav button').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active'); $(btn.dataset.section).classList.add('active');
+}));
+
+$('smsGo').onclick = async () => {
+  try { const r = await call('/api/sms', {text:$('smsText').value}, false);
+    $('smsOut').innerHTML = `<div class="card"><div class="label">Original SMS</div><p>${esc(r.original)}</p>
+      <div class="label">Parsed information</div><pre style="white-space:pre-wrap">${esc(JSON.stringify(r.parsed,null,2))}</pre>
+      <div class="label">Observed fields</div>${fieldTable(r.observed)}</div>` + verificationCard(r);
+  } catch(e) { showError('smsOut', e); }
+};
+
+function preview(inputId, targetId) {
+  const input = $(inputId); input.onchange = () => {
+    $(targetId).innerHTML = input.files[0]
+      ? `<img class="preview" src="${URL.createObjectURL(input.files[0])}" alt="selected image">` : '';
+  };
+}
+preview('photoFile','photoPreview'); preview('dayFile','dayPreview'); preview('indoorFile','indoorPreview');
+
+async function filePayload(inputId) {
+  const file = $(inputId).files[0];
+  if (!file) throw new Error('Select an image first.');
+  const dataUrl = await new Promise((resolve,reject) => {
+    const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  return {data_url:dataUrl};
+}
+
+$('photoGo').onclick = async () => {
+  try {
+    const r = await call('/api/photo', await filePayload('photoFile'), true);
+    const f = r.fields;
+    let html = `<div class="card"><div class="label">Extraction</div>
+      <p>Status: ${badge(r.status)} &nbsp; Schema: ${esc(r.schema_validation)}</p>
+      <p>Gemini available: <strong>${r.gemini_available}</strong> &nbsp; Elapsed: ${esc(r.elapsed_ms)} ms</p>
+      <table><tr><th>Field</th><th>Value</th></tr>
+        <tr><th>brand_name</th><td>${esc(f.brand_name)}</td></tr>
+        <tr><th>registration_number</th><td>${esc(f.registration_number)}</td></tr>
+        <tr><th>manufacturer</th><td>${esc(f.manufacturer)}</td></tr>
+        <tr><th>strength</th><td>${esc(f.strength)}</td></tr>
+        <tr><th>package_volume</th><td>${esc(f.package_volume)}</td></tr></table>
+      <div class="notice">${esc(r.package_volume_note)}</div>
+      <div class="notice">${esc(r.message)}</div></div>`;
+    html += r.verification ? verificationCard(r.verification)
+      : '<div class="card"><em>No verification was run because extraction did not succeed.</em></div>';
+    $('photoOut').innerHTML = html;
+  } catch(e) { showError('photoOut', e); }
+};
+
+$('compareGo').onclick = async () => {
+  try {
+    const payload = {daylight:await filePayload('dayFile'), indoor:await filePayload('indoorFile')};
+    const r = await call('/api/compare', payload, true);
+    $('compareOut').innerHTML = comparisonCard(r);
+  } catch(e) { showError('compareOut', e); }
+};
+$('datasetGo').onclick = async () => {
+  try {
+    const r = await call('/api/compare_dataset', {medicine_id:$('datasetPack').value}, false);
+    $('compareOut').innerHTML = comparisonCard(r);
+  } catch(e) { showError('compareOut', e); }
+};
+
+function comparisonCard(r) {
+  const rows = r.fields.map(f => `<tr><td>${esc(f.field)}</td><td>${badge(f.status)}</td>
+     <td>${esc(f.daylight_raw)}</td><td>${esc(f.indoor_raw)}</td><td>${esc(f.chosen_value)}</td><td>${esc(f.source)}</td></tr>`).join('');
+  return `<div class="card">
+    <div class="label">Reconciliation for ${esc(r.medicine_id)}</div>
+    <table><tr><th>Field</th><th>Status</th><th>Daylight raw</th><th>Indoor raw</th><th>Chosen value</th><th>Source</th></tr>${rows}</table>
+    <p>Manual review required: <strong>${r.manual_review_required?'YES':'NO'}</strong> &nbsp;
+       Fields: ${esc(r.manual_review_fields||'none')}</p>
+    <p class="hint">${esc(r.notes||'')} ${r.source?('Source: '+esc(r.source)):''} Accuracy tested: false.</p>
+  </div>`;
+}
+
+$('catGo').onclick = async () => {
+  try {
+    const q = encodeURIComponent($('catQuery').value.trim());
+    const r = await call('/api/catalogue?q='+q, undefined, false);
+    const rows = r.products.map(p => `<tr><td>${esc(p.brand_name)}</td><td>${esc(p.generic_name)}</td>
+      <td>${esc(p.registration_number)}</td><td>${esc(p.applicant_name)}</td><td>${esc(p.manufacturer)}</td>
+      <td>${esc(p.strength)}</td><td>${esc((p.dosage_forms||[]).join(', '))}</td></tr>`).join('');
+    $('catOut').innerHTML = `<div class="card"><p>${r.count} match(es)${r.truncated?' (showing first 50)':''}</p>
+      <table><tr><th>Brand</th><th>Generic</th><th>Registration</th><th>Applicant</th><th>Manufacturer</th><th>Strength</th><th>Dosage form</th></tr>${rows}</table></div>`;
+  } catch(e) { showError('catOut', e); }
+};
+
+$('decisionsGo').onclick = async () => {
+  try {
+    const r = await call('/api/decisions', {}, false);
+    $('decisionsOut').innerHTML = r.cases.map(c => `<div class="card">
+      <div class="label">Scenario ${esc(c.number)}: ${esc(c.title)}</div>
+      <p>Original input: ${esc(c.original)}</p>
+      <div class="label">Observed fields</div>${fieldTable(c.observed)}</div>` + verificationCard(c)).join('');
+  } catch(e) { showError('decisionsOut', e); }
+};
+
+$('packagesGo').onclick = async () => {
+  try {
+    const r = await call('/api/packages', {}, false);
+    const rows = r.records.map(p => `<tr><td>${esc(p.observation_id)}</td><td>${badge(p.status)}</td>
+      <td>${esc(p.candidates.map(c=>c.identity).join('; ') || 'none retrieved')}</td>
+      <td>${p.manual_review?'YES':'NO'}</td><td>${esc(p.reasons.join(' | '))}</td></tr>`).join('');
+    $('packagesOut').innerHTML = `<div class="card">
+      <p>${r.total} records &nbsp; Any forced MATCH: <strong>${r.any_forced_match}</strong> &nbsp;
+         pack_10 manual review: <strong>${r.pack_10_manual_review}</strong></p>
+      <table><tr><th>Medicine</th><th>Decision</th><th>Candidates</th><th>Review</th><th>Reasons</th></tr>${rows}</table>
+      <p class="hint">Accuracy tested: ${r.accuracy_tested}. OCR values are observations; ground truth is empty.</p></div>`;
+  } catch(e) { showError('packagesOut', e); }
+};
+
+call('/api/config', undefined, false).then(c => {
+  $('config').textContent = `Gemini: ${c.gemini_available ? 'available' : 'unavailable'} | Model: ${c.model} | Catalogue: ${c.catalogue_rows} records | ${c.note}`;
+  $('datasetPack').innerHTML = c.medicine_ids.map(id => `<option value="${esc(id)}">${esc(id)}</option>`).join('');
+}).catch(e => { $('config').textContent = 'Configuration unavailable: ' + e.message; });
+</script>
+</body>
+</html>

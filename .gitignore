@@ -1,0 +1,12 @@
+.env
+.idea/
+.venv/
+__pycache__/
+*.py[cod]
+*.log
+*.db
+*.sqlite3
+!data/deployment_seed.sqlite3
+.pytest_cache/
+.pytest-basetemp-*/
+frontend/dist/

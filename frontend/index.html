@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14342a">
+  <title>Drug Checker</title>
+  <link rel="stylesheet" href="drugChecker.css">
+  <script src="config.js" defer></script>
+  <script src="drugChecker.js" defer></script>
+</head>
+<body>
+  <!-- Icons live in the page itself: nothing is loaded from the internet. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M3 11L21 3l-8 18-2-8-8-2z"/></symbol>
+      <symbol id="i-message" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 9h8M8 13h5"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5M12 18h.01"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+      <symbol id="i-dash" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-icon"><svg class="icon"><use href="#i-search"/></svg></span>
+      <div>
+        <h1>Drug Checker</h1>
+        <p>Check a drug against NAFDAC records</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- SMS entry: opens the demonstration screen. It is NOT a link to a phone number. -->
+  <section id="sms-wrap" class="sms-wrap" aria-label="Check by SMS">
+    <button type="button" id="open-sms" class="sms-block">
+      <span class="sms-inner">
+        <span class="sms-icon"><svg class="icon"><use href="#i-message"/></svg></span>
+        <span class="sms-text">
+          <strong>No data? SMS works too</strong>
+          <span>See how a text message check works on any phone.</span>
+          <em>Live number coming soon</em>
+        </span>
+        <svg class="icon sms-arrow"><use href="#i-arrow-right"/></svg>
+      </span>
+    </button>
+  </section>
+
+  <noscript><p class="noscript">This page needs JavaScript to run the checker.</p></noscript>
+
+  <main id="chat-view" class="chat" aria-label="Drug checker chat">
+    <div id="messages" class="messages" aria-live="polite"></div>
+
+    <p class="hint" id="photo-hint">Camera tip: photograph the side or back of the box, where "NAFDAC REG. NO." is printed.</p>
+
+    <form id="chat-form" class="composer" autocomplete="off">
+      <input type="file" id="photo-input" accept="image/*" capture="environment" hidden>
+      <button type="button" id="photo-btn" class="icon-btn" aria-label="Photograph a drug box" aria-describedby="photo-hint">
+        <svg class="icon"><use href="#i-camera"/></svg>
+      </button>
+      <input type="text" id="text-input" placeholder="Drug name or reg number" aria-label="Drug name or registration number" maxlength="200" enterkeyhint="send">
+      <button type="submit" id="send-btn" class="send-btn" aria-label="Send">
+        <svg class="icon"><use href="#i-send"/></svg>
+      </button>
+    </form>
+  </main>
+
+  <!-- The SMS experience, shown on a simulated phone -->
+  <section id="sms-view" class="sms-view" aria-labelledby="sms-title" hidden>
+    <button type="button" id="sms-back" class="text-btn">
+      <svg class="icon"><use href="#i-arrow-left"/></svg> Back to chat
+    </button>
+    <h2 id="sms-title" tabindex="-1">SMS experience</h2>
+    <p class="sub">Simulated SMS conversation using the backend. No text message is sent; a live SMS number is not configured.</p>
+
+    <div class="phone" role="group" aria-label="Simulated phone">
+      <div class="phone-bar">Drug Checker</div>
+      <div id="sms-thread" class="sms-thread" aria-live="polite"></div>
+      <form id="sms-form" class="sms-compose" autocomplete="off">
+        <input type="text" id="sms-input" placeholder="Text message" aria-label="Text message" maxlength="200" enterkeyhint="send">
+        <button type="submit" id="sms-send" class="send-btn" aria-label="Send text message">
+          <svg class="icon"><use href="#i-send"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <p class="examples-label">Try an example:</p>
+    <div id="sms-examples" class="chips"></div>
+  </section>
+
+  <footer class="site-footer">
+    <p id="data-note">Limited demo data. Registry records and synthetic alerts do not authenticate a physical package. This service does not give medical advice.</p>
+  </footer>
+</body>
+</html>

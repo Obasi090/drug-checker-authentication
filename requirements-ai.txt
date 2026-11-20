@@ -1,0 +1,6 @@
+# Optional runtime dependencies for message parsing, Gemini, and photo OCR.
+# The core Flask/SQLite backend does not install or require these packages.
+-r requirements.txt
+pydantic>=2.7,<3
+google-genai>=2.0,<3
+python-dotenv>=1.0,<2

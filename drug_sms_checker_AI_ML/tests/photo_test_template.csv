@@ -1,0 +1,23 @@
+pack_id,lighting,image_path,expected_registration_number,observed_registration_number,result,notes
+PACK-01,daylight,,,,pending,Real pack required
+PACK-01,indoor_tube_light,,,,pending,Real pack required
+PACK-02,daylight,,,,pending,Real pack required
+PACK-02,indoor_tube_light,,,,pending,Real pack required
+PACK-03,daylight,,,,pending,Real pack required
+PACK-03,indoor_tube_light,,,,pending,Real pack required
+PACK-04,daylight,,,,pending,Real pack required
+PACK-04,indoor_tube_light,,,,pending,Real pack required
+PACK-05,daylight,,,,pending,Real pack required
+PACK-05,indoor_tube_light,,,,pending,Real pack required
+PACK-06,daylight,,,,pending,Real pack required
+PACK-06,indoor_tube_light,,,,pending,Real pack required
+PACK-07,daylight,,,,pending,Real pack required
+PACK-07,indoor_tube_light,,,,pending,Real pack required
+PACK-08,daylight,,,,pending,Real pack required
+PACK-08,indoor_tube_light,,,,pending,Real pack required
+PACK-09,daylight,,,,pending,Real pack required
+PACK-09,indoor_tube_light,,,,pending,Real pack required
+PACK-10,daylight,,,,pending,Real pack required
+PACK-10,indoor_tube_light,,,,pending,Real pack required
+PACK-11,daylight,,,,pending,Real pack required
+PACK-11,indoor_tube_light,,,,pending,Real pack required

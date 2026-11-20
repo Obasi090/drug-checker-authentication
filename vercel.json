@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "buildCommand": "node frontend/build.mjs",
+  "outputDirectory": "frontend/dist",
+  "framework": null
+}
